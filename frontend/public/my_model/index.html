@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachable Machine Image Classification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #webcam-container {
+            margin-top: 20px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #label-container {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teachable Machine Image Classification</h1>
+    <button type="button" onclick="startWebcam()">Start</button>
+    <div id="webcam-container"></div>
+    <div id="label-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script>
+        const URL = "http://localhost:8000/my_model/";  // URL to the model directory
+
+        let model, webcam, labelContainer, maxPredictions;
+        let isPredicting = false;
+        let highestPrediction = { className: "", probability: 0 };
+
+        async function startWebcam() {
+            if (webcam) {
+                await webcam.stop();
+                document.getElementById("webcam-container").innerHTML = '';
+                document.getElementById("label-container").innerHTML = '';
+            }
+
+            init();
+        }
+
+        async function init() {
+            console.log("Initializing...");
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            console.log("Model URL:", modelURL);
+            console.log("Metadata URL:", metadataURL);
+
+            try {
+                model = await tmImage.load(modelURL, metadataURL);
+                maxPredictions = model.getTotalClasses();
+                console.log("Model loaded successfully.");
+
+                const flip = true; // whether to flip the webcam
+                webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+                await webcam.setup(); // request access to the webcam
+                console.log("Webcam setup completed.");
+                await webcam.play();
+                window.requestAnimationFrame(loop);
+
+                document.getElementById("webcam-container").appendChild(webcam.canvas);
+                labelContainer = document.getElementById("label-container");
+                labelContainer.appendChild(document.createElement("div"));
+
+                // Start the prediction loop
+                isPredicting = true;
+                highestPrediction = { className: "", probability: 0 }; // Reset highest prediction
+                setTimeout(() => {
+                    isPredicting = false;
+                    // Display the highest prediction after 5 seconds
+                    labelContainer.childNodes[0].innerHTML = highestPrediction.className + ": " + highestPrediction.probability.toFixed(2);
+                }, 5000); // Stop the prediction loop after 5 seconds
+            } catch (error) {
+                console.error("Error during initialization:", error);
+            }
+        }
+
+        async function loop() {
+            if (isPredicting) {
+                webcam.update(); // Update the webcam frame
+                await predict(); // Make predictions
+                window.requestAnimationFrame(loop); // Keep the loop going
+            }
+        }
+
+        async function predict() {
+            try {
+                const predictions = await model.predict(webcam.canvas);
+                predictions.forEach(prediction => {
+                    if (prediction.probability > highestPrediction.probability) {
+                        highestPrediction = prediction;
+                    }
+                });
+            } catch (error) {
+                console.error("Error during prediction:", error);
+            }
+        }
+    </script>
+</body>
+</html>

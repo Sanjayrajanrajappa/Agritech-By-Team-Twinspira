@@ -1,0 +1,108 @@
+.page {
+    padding: 20px;
+  }
+  
+  .data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  .data-item {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .data-item h2 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+  /* DataPage.css */
+
+/* Data Page Specific Styles */
+.data-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: #0b061f;
+}
+
+.content-container {
+  max-width: 1200px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 40px #7d2ae8;
+  border: 2px solid #7d2ae8;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.data-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.data-flex-container {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.data-item {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  border: 2px solid #7d2ae8;
+  transition: border-color 0.3s ease;
+}
+
+.data-item:hover {
+  border-color: #ffac09;
+}
+
+.data-item h2 {
+  color: #ffac09;
+}
+
+.data-item p {
+  color: #ccc;
+}
+
+.btn {
+  padding: 15px 30px;
+  background: #7d2ae8;
+  border: 2px solid #fff;
+  outline: none;
+  border-radius: 8px;
+  box-shadow: 0 0 40px #7d2ae8;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.btn:hover {
+  background-color: #ffac09;
+  box-shadow: 0 0 40px #ffac09;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
